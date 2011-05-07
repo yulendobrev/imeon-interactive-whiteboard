@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" fontWeight="normal" fontStyle="normal" dropShadowVisible="true" borderVisible="true" title="Create and Login" enabled="true" 
+		 title.whiteBoard="{boardsList.selectedItem}" currentState="login_create" title.login_create="Create and Login" height.login_create="250" height.whiteBoard="90%" width.login_create="350" width.whiteBoard="90%">
+	<s:states>
+		<s:State name="login_create"/>
+		<s:State name="whiteBoard"/>
+	</s:states>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import flash.events.Event;
+			
+			import mvc.model.User;
+			
+			import mx.controls.Alert;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import userevent.UserEvent;
+			
+			[Bindable]
+			[Inject( source="userController.currentUser", bind="true" )]
+			/**
+			 * We could inject the whole controller instance, but we only need
+			 * one property from the controller, the current user, so we just
+			 * inject that property.
+			 */ 
+			public var user : User;
+			
+			/**
+			 * Handle the user hitting the save button. We capture the form data
+			 * and dispatch a standard Flex event. No Swiz-specific events or
+			 * special central dispatcher needed!
+			 */ 
+			private function saveUser() : void
+			{
+				user.nickName = nickName.text;
+				user.firstName = firstName.text;
+				user.lastName = lastName.text;
+				user.selectedBoard = boardsList.selectedItem;
+				var event:UserEvent = new UserEvent( UserEvent.SAVE_USER_REQUESTED );
+				event.user = user;
+				dispatchEvent( event );
+			}
+			
+			protected function boardsList_changeHandler(event:IndexChangeEvent):void
+			{
+				boardsList.dataProvider.addItem(boardsList.selectedItem);
+			}
+
+		]]>
+	</fx:Script>
+	<s:controlBarContent>
+	
+	</s:controlBarContent>
+		
+	<s:ComboBox x="178" y="26" id="boardsList" change="boardsList_changeHandler(event)" includeIn="login_create">
+		<s:dataProvider>
+			<mx:ArrayList>
+				<fx:String>Board 1</fx:String>
+				<fx:String>Board 2</fx:String>
+				<fx:String>Board 3</fx:String>
+			</mx:ArrayList>
+		</s:dataProvider>
+	</s:ComboBox>
+	<s:Label x="10" y="26" text="Choose/Create Whiteboard:" height="23" verticalAlign="middle" includeIn="login_create"/>
+	<s:TextInput x="134" y="76" id="nickName" includeIn="login_create"/>
+	<s:TextInput x="134" y="106" id="firstName" includeIn="login_create"/>
+	<s:TextInput x="134" y="136" id="lastName" includeIn="login_create"/>
+	<s:Label x="61" y="76" text="Nickname:" height="22" verticalAlign="middle" includeIn="login_create"/>
+	<s:Label x="61" y="106" text="First Name:" height="22" verticalAlign="middle" includeIn="login_create"/>
+	<s:Label x="61" y="136" text="Last Name:" height="22" verticalAlign="middle" includeIn="login_create"/>
+	<s:Button x="139" y="170" label="Enter" id="btnEnter" click="saveUser()" click.login_create="currentState = 'whiteBoard'"/>
+	<mx:VRule includeIn="whiteBoard" x="252" bottom="0" top="-1"/>
+	<mx:TabNavigator includeIn="whiteBoard" x="14" width="228" bottom="15" top="15">
+		<s:NavigatorContent label="Toolbox">
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Chat" width="100%" height="100%">
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Users" width="100%" height="100%">
+		</s:NavigatorContent>
+	</mx:TabNavigator>
+			
+</s:Panel>
