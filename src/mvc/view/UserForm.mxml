@@ -2,7 +2,7 @@
 <s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" fontWeight="normal" fontStyle="normal" dropShadowVisible="true" borderVisible="true" title="Create and Login" enabled="true" 
-		 title.whiteBoard="{boardsList.selectedItem}" currentState="login_create" title.login_create="Create and Login" height.login_create="250" height.whiteBoard="90%" width.login_create="350" width.whiteBoard="90%">
+		 title.whiteBoard="{boardsList.selectedItem}" currentState="login_create" title.login_create="Create and Login" height.login_create="250" height.whiteBoard="90%" width.login_create="350" width.whiteBoard="90%" xmlns:view="mvc.view.*">
 	<s:states>
 		<s:State name="login_create"/>
 		<s:State name="whiteBoard"/>
@@ -79,11 +79,23 @@
 	<mx:VRule includeIn="whiteBoard" x="252" bottom="0" top="-1"/>
 	<mx:TabNavigator includeIn="whiteBoard" x="14" width="228" bottom="15" top="15">
 		<s:NavigatorContent label="Toolbox">
+			<s:TileGroup orientation="rows" >
+				<view:RectTool id="rectTool" skinClass="mvc.view.RectToolButton"
+							   board="{whiteboard}" width="25" height="25"/>
+			</s:TileGroup>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Chat" width="100%" height="100%">
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Users" width="100%" height="100%">
 		</s:NavigatorContent>
 	</mx:TabNavigator>
-			
+	<s:BorderContainer includeIn="whiteBoard" x="268" width="638" top="15" bottom="15">
+		<s:Group id="whiteboard" width="100%" height="100%">
+			<s:Rect width="100%" height="100%">
+				<s:fill>
+					<s:SolidColor color="0xffffff"/>
+				</s:fill>
+			</s:Rect>
+		</s:Group>
+	</s:BorderContainer>
 </s:Panel>
