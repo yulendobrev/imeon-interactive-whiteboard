@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx">
+	<!-- host component -->
+	<fx:Metadata>
+		[HostComponent("mvc.view.EllipseTool")]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<fx:Number id="offset">5</fx:Number>
+		<fx:Number id="ratio">0.8</fx:Number>
+	</fx:Declarations>
+	
+	<!-- SkinParts
+	name=toolButton, type=spark.components.ToggleButton, required=false
+	-->
+	
+	<s:ToggleButton id="toolButton" width="{width}" height="{height}"
+					toolTip="Ellipse tool">
+	</s:ToggleButton>
+	<s:Ellipse x="{offset}" y="{offset + (1.0 - ratio) * height / 2.0}"
+			width="{width - 2 * offset}"
+			height="{ratio * height - 2 * offset}">
+		<s:fill>
+			<s:SolidColor alpha="0.0" color="0xffffff"/>
+		</s:fill>
+		<s:stroke>
+			<s:SolidColorStroke weight="2" color="0x404040"/>
+		</s:stroke>
+	</s:Ellipse>
+</s:Skin>
