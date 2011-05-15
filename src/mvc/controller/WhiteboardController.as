@@ -1,5 +1,9 @@
 package mvc.controller
 {
+	import mx.controls.Alert;
+	
+	import org.swizframework.utils.services.ServiceHelper;
+	
 	import whiteboardevent.RectangleEvent;
 
 	public class WhiteboardController

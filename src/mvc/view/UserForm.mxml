@@ -79,9 +79,13 @@
 	<mx:VRule includeIn="whiteBoard" x="252" bottom="0" top="-1"/>
 	<mx:TabNavigator includeIn="whiteBoard" x="14" width="228" bottom="15" top="15">
 		<s:NavigatorContent label="Toolbox">
-			<s:TileGroup orientation="rows" >
+			<s:TileGroup orientation="rows" width="100%" rowHeight="30" columnWidth="30">
 				<view:RectTool id="rectTool" skinClass="mvc.view.RectToolButton"
-							   board="{whiteboard}" width="25" height="25"/>
+							   board="{whiteboard}"/>
+				<view:LineTool id="lineTool" skinClass="mvc.view.LineToolButton"
+							   board="{whiteboard}"/>
+				<view:EllipseTool id="ellipseTool" skinClass="mvc.view.EllipseToolButton"
+								  board="{whiteboard}"/>
 			</s:TileGroup>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Chat" width="100%" height="100%">

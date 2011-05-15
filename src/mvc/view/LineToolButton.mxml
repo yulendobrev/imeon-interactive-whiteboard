@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx">
+	<!-- host component -->
+	<fx:Metadata>
+		[HostComponent("mvc.view.LineTool")]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<fx:Number id="offset">5</fx:Number>
+	</fx:Declarations>
+	
+	<!-- SkinParts
+	name=toolButton, type=spark.components.ToggleButton, required=false
+	-->
+	
+	<s:ToggleButton id="toolButton" width="{width}" height="{height}"
+					toolTip="Line tool">
+	</s:ToggleButton>
+	<s:Line xFrom="{offset}" yFrom="{height - offset}"
+			xTo="{width - offset}" yTo="{offset}">
+		<s:stroke>
+			<s:SolidColorStroke color="0x404040" weight="2"/>
+		</s:stroke>
+	</s:Line>
+</s:Skin>

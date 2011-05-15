@@ -6,6 +6,7 @@
 	
 	<service:UserService id="userService"/>
 	<controller:UserController id="userController"/>
+	<controller:WhiteboardController id="whiteboardController"/>
 		
 	<swiz:ServiceHelper id="serviceHelper" />  <!-- We'll use the Swiz ServiceHelper to help simulate a server-side call. -->
 	

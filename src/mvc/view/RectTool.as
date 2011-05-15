@@ -1,120 +1,44 @@
 package mvc.view
 {
-	import flash.events.ContextMenuEvent;
-	import flash.events.MouseEvent;
-	
-	import mx.core.mx_internal;
+	import mx.core.IVisualElement;
 	import mx.graphics.SolidColor;
 	import mx.graphics.SolidColorStroke;
-	import mx.states.OverrideBase;
 	
-	import spark.components.Group;
-	import spark.components.ToggleButton;
-	import spark.components.supportClasses.SkinnableComponent;
 	import spark.primitives.Rect;
 	
 	import whiteboardevent.RectangleEvent;
 	
-	public class RectTool extends SkinnableComponent
+	public class RectTool extends TwoPointsTool
 	{
 		private var _currentRect:Rect;
-		
-		private var _board:Group;
-		public function get board():Group
-		{
-			return _board;
-		}
-		
-		public function set board(value:Group):void
-		{
-			_board = value;
-		}
-		
-		[SkinPart]
-		public var toolButton:ToggleButton;
 		
 		public function RectTool()
 		{
 			super();
 		}
-		
-		protected override function partAdded(partName:String, instance:Object):void
-		{
-			if(instance === toolButton)
-			{
-				toolButton.addEventListener(MouseEvent.CLICK, determineToolMode);
-			}
-		}
-		
-		protected override function partRemoved(partName:String, instance:Object):void
-		{
-			if(instance === toolButton)
-			{
-				detachToolHandlers();
-				toolButton.removeEventListener(MouseEvent.CLICK, determineToolMode);
-			}
-		}
-		
-		protected function determineToolMode(event:MouseEvent):void
-		{
-			if(toolButton.selected)
-			{
-				attachToolHandlers();
-			}
-			else
-			{
-				detachToolHandlers();
-			}
-		}
-		
-		protected function attachToolHandlers():void
-		{
-			if(_board != null)
-			{
-				_board.addEventListener(MouseEvent.CLICK, startDraw);
-			}
-		}
-		
-		protected function detachToolHandlers():void
-		{
-			if(_board != null)
-			{
-				_board.removeEventListener(MouseEvent.CLICK, startDraw);
-				_board.removeEventListener(MouseEvent.MOUSE_MOVE, updateRect);
-				_board.removeEventListener(MouseEvent.CLICK, stopDraw);
-			}
-		}
-		
-		protected function startDraw(event:MouseEvent):void
+
+		protected override function createElement(x:Number, y:Number):IVisualElement
 		{
 			_currentRect = new Rect();
 			
 			_currentRect.stroke = new SolidColorStroke(0x800010, 2);
 			_currentRect.fill = new SolidColor(0xff0000);
-			_currentRect.x = event.localX;
-			_currentRect.y = event.localY;
+			_currentRect.x = x;
+			_currentRect.y = y;
 			_currentRect.width = _currentRect.height = 1;
 			
-			_board.addElement(_currentRect);
-			
-			_board.removeEventListener(MouseEvent.CLICK, startDraw);
-			_board.addEventListener(MouseEvent.MOUSE_MOVE, updateRect);
-			_board.addEventListener(MouseEvent.CLICK, stopDraw);
+			return _currentRect;
 		}
 		
-		protected function updateRect(event:MouseEvent):void
+		protected override function updateElement(x:Number, y:Number):void
 		{
-			_currentRect.width = event.localX - _currentRect.x;
-			_currentRect.height = event.localY - _currentRect.y;
+			_currentRect.width = x - _currentRect.x;
+			_currentRect.height = y - _currentRect.y;
 		}
 		
-		protected function stopDraw(event:MouseEvent):void
+		protected override function dispatchElementDrawn():void
 		{
 			var rectEvent:RectangleEvent = new RectangleEvent(RectangleEvent.ADDED);
-			
-			_board.removeEventListener(MouseEvent.CLICK, stopDraw);
-			_board.removeEventListener(MouseEvent.MOUSE_MOVE, updateRect);
-			_board.addEventListener(MouseEvent.CLICK, startDraw);
 			
 			rectEvent.x = _currentRect.x;
 			rectEvent.y = _currentRect.y;
