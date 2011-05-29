@@ -4,8 +4,10 @@ package mvc.view
 	import mx.graphics.SolidColor;
 	import mx.graphics.SolidColorStroke;
 	
-	import spark.primitives.Ellipse;
 	import spark.components.Group;
+	import spark.primitives.Ellipse;
+	
+	import whiteboardevent.EllipseEvent;
 
 	public class EllipseTool extends TwoPointsTool
 	{
@@ -37,6 +39,10 @@ package mvc.view
 		
 		protected override function dispatchElementDrawn():void
 		{
+			var event:EllipseEvent =
+				new EllipseEvent(EllipseEvent.ADDED, _currentEllipse);
+			
+			dispatchEvent(event);
 		}
 	}
 }

@@ -1,9 +1,13 @@
 package mvc.view
 {
+	import flash.events.Event;
+	
 	import mx.core.IVisualElement;
 	import mx.graphics.SolidColorStroke;
 	
 	import spark.primitives.Line;
+	
+	import whiteboardevent.LineEvent;
 
 	public class LineTool extends TwoPointsTool
 	{
@@ -34,6 +38,10 @@ package mvc.view
 		
 		protected override function dispatchElementDrawn():void
 		{
+			var event:LineEvent =
+				new LineEvent(LineEvent.ADDED, _currentLine);
+			
+			dispatchEvent(event);
 		}
 	}
 }

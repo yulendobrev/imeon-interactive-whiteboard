@@ -5,6 +5,7 @@
 	xmlns:controller="mvc.controller.*">
 	
 	<service:UserService id="userService"/>
+	<service:DrawingService id="drawingService"/>
 	<controller:UserController id="userController"/>
 	<controller:WhiteboardController id="whiteboardController"/>
 		
