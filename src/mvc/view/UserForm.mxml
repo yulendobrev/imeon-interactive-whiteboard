@@ -15,13 +15,25 @@
 		<![CDATA[
 			import flash.events.Event;
 			
+			import mvc.controller.WhiteboardController;
+			import mvc.model.EllipseData;
+			import mvc.model.LineData;
+			import mvc.model.RectangleData;
 			import mvc.model.User;
 			
 			import mx.controls.Alert;
+			import mx.events.FlexEvent;
 			
 			import spark.events.IndexChangeEvent;
 			
 			import userevent.UserEvent;
+			
+			import whiteboardevent.EllipseEvent;
+			import whiteboardevent.LineEvent;
+			import whiteboardevent.RectangleEvent;
+			
+			[Inject]
+			public var whiteboardController:WhiteboardController;
 			
 			[Bindable]
 			[Inject( source="userController.currentUser", bind="true" )]
@@ -53,10 +65,61 @@
 				boardsList.dataProvider.addItem(boardsList.selectedItem);
 			}
 
+			[PostConstruct]
+			public function attachWhiteboardHandlers():void
+			{
+				whiteboardController.addEventListener(RectangleEvent.REMOTE_ADDED, rectangleAdded);
+				whiteboardController.addEventListener(LineEvent.REMOTE_ADDED, lineAdded);
+				whiteboardController.addEventListener(EllipseEvent.REMOTE_ADDED, ellipseAdded);
+			}
+			
+			protected function rectangleAdded(event:RectangleEvent):void
+			{
+				if(whiteboard != null)
+				{
+					//Alert.show("Remote rectangle is drawn");
+					updateStatus("Remote rectangle is drawn. ");
+					whiteboard.addElement(RectangleData.rect(event.data));
+				}
+			}
+			
+			protected function lineAdded(event:LineEvent):void
+			{
+				if(whiteboard != null)
+				{
+					//Alert.show("Remote line is drawn");
+					updateStatus("Remote line is drawn. ");
+					whiteboard.addElement(LineData.line(event.data));
+				}
+			}
+			
+			protected function ellipseAdded(event:EllipseEvent):void
+			{
+				if(whiteboard != null)
+				{
+					//Alert.show("Remote ellipse is drawn");
+					updateStatus("Remote ellipse is drawn. ");
+					whiteboard.addElement(EllipseData.ellipse(event.data));
+				}
+			}
+			
+			public function updateStatus(text:String):void
+			{
+				status.text = text;
+				
+				var timer:Timer = new Timer(10000, 1);
+				timer.addEventListener(TimerEvent.TIMER, resetStatus);
+				timer.start();
+			}
+			
+			protected function resetStatus(event:TimerEvent):void
+			{
+				status.text = "";
+			}
 		]]>
 	</fx:Script>
 	<s:controlBarContent>
-	
+		<s:Label id="status"/>
 	</s:controlBarContent>
 		
 	<s:ComboBox x="178" y="26" id="boardsList" change="boardsList_changeHandler(event)" includeIn="login_create">

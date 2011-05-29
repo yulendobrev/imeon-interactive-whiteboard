@@ -38,14 +38,8 @@ package mvc.view
 		
 		protected override function dispatchElementDrawn():void
 		{
-			var rectEvent:RectangleEvent = new RectangleEvent(RectangleEvent.ADDED);
-			
-			rectEvent.x = _currentRect.x;
-			rectEvent.y = _currentRect.y;
-			rectEvent.width = _currentRect.width;
-			rectEvent.height = _currentRect.height;
-			rectEvent.borderWidth = _currentRect.stroke.weight;
-			rectEvent.alpha = _currentRect.alpha;
+			var rectEvent:RectangleEvent =
+				new RectangleEvent(RectangleEvent.ADDED, _currentRect);
 			
 			dispatchEvent(rectEvent);
 		}
