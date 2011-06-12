@@ -2,7 +2,8 @@
 <s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" fontWeight="normal" fontStyle="normal" dropShadowVisible="true" borderVisible="true" title="Create and Login" enabled="true" 
-		 title.whiteBoard="{boardsList.selectedItem}" currentState="login_create" title.login_create="Create and Login" height.login_create="250" height.whiteBoard="90%" width.login_create="350" width.whiteBoard="90%" xmlns:view="mvc.view.*">
+		 title.whiteBoard="{boardsList.selectedItem}" currentState="login_create" title.login_create="Create and Login" height.login_create="250" height.whiteBoard="90%" width.login_create="350" width.whiteBoard="90%"
+		 enabled.login_create="true">
 	<s:states>
 		<s:State name="login_create"/>
 		<s:State name="whiteBoard"/>
@@ -13,27 +14,19 @@
 	
 	<fx:Script>
 		<![CDATA[
+
 			import flash.events.Event;
-			
-			import mvc.controller.WhiteboardController;
-			import mvc.model.EllipseData;
-			import mvc.model.LineData;
-			import mvc.model.RectangleData;
 			import mvc.model.User;
-			
+			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
-			import mx.events.FlexEvent;
-			
+			import mx.controls.Image;
+			import mx.core.DragSource;
+			import mx.core.UIComponent;
+			import mx.events.DragEvent;
+			import mx.managers.DragManager;
+			import org.swizframework.reflection.BindableMetadataHost;
 			import spark.events.IndexChangeEvent;
-			
 			import userevent.UserEvent;
-			
-			import whiteboardevent.EllipseEvent;
-			import whiteboardevent.LineEvent;
-			import whiteboardevent.RectangleEvent;
-			
-			[Inject]
-			public var whiteboardController:WhiteboardController;
 			
 			[Bindable]
 			[Inject( source="userController.currentUser", bind="true" )]
@@ -42,7 +35,8 @@
 			 * one property from the controller, the current user, so we just
 			 * inject that property.
 			 */ 
-			public var user : User;
+			public var user:User;
+			private var allImagesArray:ArrayCollection = new ArrayCollection();
 			
 			/**
 			 * Handle the user hitting the save button. We capture the form data
@@ -57,70 +51,64 @@
 				user.selectedBoard = boardsList.selectedItem;
 				var event:UserEvent = new UserEvent( UserEvent.SAVE_USER_REQUESTED );
 				event.user = user;
-				dispatchEvent( event );
+				dispatchEvent(event);
 			}
 			
 			protected function boardsList_changeHandler(event:IndexChangeEvent):void
 			{
 				boardsList.dataProvider.addItem(boardsList.selectedItem);
 			}
-
-			[PostConstruct]
-			public function attachWhiteboardHandlers():void
-			{
-				whiteboardController.addEventListener(RectangleEvent.REMOTE_ADDED, rectangleAdded);
-				whiteboardController.addEventListener(LineEvent.REMOTE_ADDED, lineAdded);
-				whiteboardController.addEventListener(EllipseEvent.REMOTE_ADDED, ellipseAdded);
-			}
+	
+			[Bindable]
+			private var ac:ArrayCollection = new ArrayCollection([
+				{src:"assets/1.jpg", Pics:'assets/1.jpg'},
+				{src:"assets/2.jpg", Pics:'assets/2.jpg'},
+				{src:"assets/3.jpg", Pics:'assets/3.jpg'},
+				{src:"assets/4.jpg", Pics:'assets/4.jpg'},
+				{src:"assets/5.jpg", Pics:'assets/5.jpg'},
+				{src:"assets/6.jpg", Pics:'assets/6.jpg'},
+				{src:"assets/7.jpg", Pics:'assets/7.jpg'}
+			]);
 			
-			protected function rectangleAdded(event:RectangleEvent):void
+			private function acceptIt(event:DragEvent):void
 			{
-				if(whiteboard != null)
+				DragManager.acceptDragDrop(UIComponent(event.target));
+			}
+			private function performDrop(event:DragEvent):void
+			{
+				if(event.dragSource.hasFormat("items"))
 				{
-					//Alert.show("Remote rectangle is drawn");
-					updateStatus("Remote rectangle is drawn. ");
-					whiteboard.addElement(RectangleData.rect(event.data));
+					var items:Array = event.dragSource.dataForFormat("items") as Array;
+					var img:Image = new Image()
+					img.x=event.localX
+					img.y=event.localY
+					img.source=items[0].src
+					img.addEventListener(MouseEvent.MOUSE_MOVE, dragIt);
+					workspace.addChild(img);
 				}
-			}
-			
-			protected function lineAdded(event:LineEvent):void
-			{
-				if(whiteboard != null)
+				else
 				{
-					//Alert.show("Remote line is drawn");
-					updateStatus("Remote line is drawn. ");
-					whiteboard.addElement(LineData.line(event.data));
+					event.dragInitiator.x=event.localX
+					event.dragInitiator.y=event.localY
 				}
-			}
-			
-			protected function ellipseAdded(event:EllipseEvent):void
-			{
-				if(whiteboard != null)
-				{
-					//Alert.show("Remote ellipse is drawn");
-					updateStatus("Remote ellipse is drawn. ");
-					whiteboard.addElement(EllipseData.ellipse(event.data));
-				}
-			}
-			
-			public function updateStatus(text:String):void
-			{
-				status.text = text;
 				
-				var timer:Timer = new Timer(10000, 1);
-				timer.addEventListener(TimerEvent.TIMER, resetStatus);
-				timer.start();
 			}
-			
-			protected function resetStatus(event:TimerEvent):void
+			private function dragIt(event:MouseEvent):void 
 			{
-				status.text = "";
+				var dragInitiator:Image = event.currentTarget as Image;
+				var dragSource:DragSource = new DragSource();
+				
+				dragSource.addData(1, 'value');
+
+				var dragProxy:Image = new Image();
+				dragProxy.source = event.currentTarget.source;
+				dragProxy.setActualSize(event.currentTarget.width,event.currentTarget.height)
+
+				DragManager.doDrag(dragInitiator, dragSource, event, dragProxy);
 			}
+						
 		]]>
 	</fx:Script>
-	<s:controlBarContent>
-		<s:Label id="status"/>
-	</s:controlBarContent>
 		
 	<s:ComboBox x="178" y="26" id="boardsList" change="boardsList_changeHandler(event)" includeIn="login_create">
 		<s:dataProvider>
@@ -142,27 +130,19 @@
 	<mx:VRule includeIn="whiteBoard" x="252" bottom="0" top="-1"/>
 	<mx:TabNavigator includeIn="whiteBoard" x="14" width="228" bottom="15" top="15">
 		<s:NavigatorContent label="Toolbox">
-			<s:TileGroup orientation="rows" width="100%" rowHeight="30" columnWidth="30">
-				<view:RectTool id="rectTool" skinClass="mvc.view.RectToolButton"
-							   board="{whiteboard}"/>
-				<view:LineTool id="lineTool" skinClass="mvc.view.LineToolButton"
-							   board="{whiteboard}"/>
-				<view:EllipseTool id="ellipseTool" skinClass="mvc.view.EllipseToolButton"
-								  board="{whiteboard}"/>
-			</s:TileGroup>
+			<mx:DataGrid id="tl" dataProvider="{ac}" dragEnabled="true" width="216" height="415" x="5" y="0">
+				<mx:columns>
+					<mx:DataGridColumn dataField="Pics" itemRenderer="mx.controls.Image"/>
+				</mx:columns>
+			</mx:DataGrid>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Chat" width="100%" height="100%">
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Users" width="100%" height="100%">
 		</s:NavigatorContent>
 	</mx:TabNavigator>
-	<s:BorderContainer includeIn="whiteBoard" x="268" width="638" top="15" bottom="15">
-		<s:Group id="whiteboard" width="100%" height="100%">
-			<s:Rect width="100%" height="100%">
-				<s:fill>
-					<s:SolidColor color="0xffffff"/>
-				</s:fill>
-			</s:Rect>
-		</s:Group>
-	</s:BorderContainer>
+			
+	<mx:Canvas id="workspace" backgroundColor="#ffffff" dragEnter="acceptIt(event)" dragDrop="performDrop(event)" includeIn="whiteBoard" height="95%" width="75%" dropShadowVisible="true" borderVisible="true" x="262" y="15">
+	</mx:Canvas>
+	
 </s:Panel>
