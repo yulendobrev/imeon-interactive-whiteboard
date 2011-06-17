@@ -5,9 +5,11 @@ package mvc.controller
 	
 	import mvc.model.User;
 	
+	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
 	import mx.events.CloseEvent;
 	import mx.rpc.events.ResultEvent;
+	import mx.states.AddItems;
 	
 	import org.swizframework.utils.services.ServiceHelper;
 	
@@ -38,10 +40,10 @@ package mvc.controller
 		/**
 		 * Perform a server request to save the user
 		 */ 
-		public function saveUser( user : User ) : void
+		public function saveUser(user:User) : void
 		{
-			serviceHelper.executeServiceCall( userService.saveUser( user ), handleSaveUserResult );
-
+			//serviceHelper.executeServiceCall( userService.saveUser( user ), handleSaveUserResult );
+			userService.saveUser(user, handleSaveUserResult);
 		}
 		
 		/**

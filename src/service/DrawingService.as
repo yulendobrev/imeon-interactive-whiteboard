@@ -48,7 +48,7 @@ package service
 			switch (event.info.code)
 			{
 				case "NetConnection.Connect.Success":
-					so = SharedObject.getRemote("Drawing", nc.uri, false);
+					so = SharedObject.getRemote("Drawing", nc.uri, true);
 					so.client = this;
 					so.addEventListener(SyncEvent.SYNC, syncDrawing);
 					so.connect(nc);

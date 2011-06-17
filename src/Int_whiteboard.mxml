@@ -19,7 +19,7 @@
 				<!-- The eventPackages value tells Swiz the path to your Event classes,
 				and viewPackages is an optional value that speeds up the processing of display classes. -->
 				<swiz:SwizConfig 
-					eventPackages="userevent.*, whiteboardevent.*" 
+					eventPackages="userevent.*, whiteboardevent.*, chatevent.*" 
 					viewPackages="mvc.view.*" />
 			</swiz:config>
 			
