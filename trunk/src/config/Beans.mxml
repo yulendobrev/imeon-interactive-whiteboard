@@ -5,9 +5,11 @@
 	xmlns:controller="mvc.controller.*">
 	
 	<service:UserService id="userService"/>
-	<service:DrawingService id="drawingService"/>
+	<service:ChatService id="chatService"/>
+<!--	<service:DrawingService id="drawingService"/> -->
 	<controller:UserController id="userController"/>
-	<controller:WhiteboardController id="whiteboardController"/>
+	<controller:ChatController id="chatController"/>
+<!--	<controller:WhiteboardController id="whiteboardController"/> -->
 		
 	<swiz:ServiceHelper id="serviceHelper" />  <!-- We'll use the Swiz ServiceHelper to help simulate a server-side call. -->
 	

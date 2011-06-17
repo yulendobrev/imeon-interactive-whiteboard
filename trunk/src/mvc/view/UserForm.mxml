@@ -4,6 +4,7 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx" fontWeight="normal" fontStyle="normal" dropShadowVisible="true" borderVisible="true" title="Create and Login" enabled="true" 
 		 title.whiteBoard="{boardsList.selectedItem}" currentState="login_create" title.login_create="Create and Login" height.login_create="250" height.whiteBoard="90%" width.login_create="350" width.whiteBoard="90%"
 		 enabled.login_create="true">
+	
 	<s:states>
 		<s:State name="login_create"/>
 		<s:State name="whiteBoard"/>
@@ -14,29 +15,41 @@
 	
 	<fx:Script>
 		<![CDATA[
-
+			import chatevent.ChatEvent;
+			
 			import flash.events.Event;
+			
+			import mvc.model.Chat;
 			import mvc.model.User;
+			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.Image;
 			import mx.core.DragSource;
 			import mx.core.UIComponent;
 			import mx.events.DragEvent;
+			import mx.events.FlexEvent;
 			import mx.managers.DragManager;
+			
 			import org.swizframework.reflection.BindableMetadataHost;
+			
+			import spark.components.RichEditableText;
 			import spark.events.IndexChangeEvent;
+			
 			import userevent.UserEvent;
 			
 			[Bindable]
-			[Inject( source="userController.currentUser", bind="true" )]
+			[Inject(source="userController.currentUser", bind="true")]
 			/**
 			 * We could inject the whole controller instance, but we only need
 			 * one property from the controller, the current user, so we just
 			 * inject that property.
 			 */ 
 			public var user:User;
-			private var allImagesArray:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			[Inject(source="chatController.currentChat", bind="true")]
+			public var chat:Chat;
 			
 			/**
 			 * Handle the user hitting the save button. We capture the form data
@@ -49,9 +62,20 @@
 				user.firstName = firstName.text;
 				user.lastName = lastName.text;
 				user.selectedBoard = boardsList.selectedItem;
-				var event:UserEvent = new UserEvent( UserEvent.SAVE_USER_REQUESTED );
+				var event:UserEvent = new UserEvent(UserEvent.SAVE_USER_REQUESTED);
 				event.user = user;
 				dispatchEvent(event);
+			}
+			
+			private function sendMessage():void
+			{
+				chat.forwarder = user;
+				chat.message = txtInput.text;
+				chat.time = new Date();		//var sec:uint = chat.time.getSeconds();
+				var event:ChatEvent = new ChatEvent(ChatEvent.SEND_MESSAGE);
+				event.chat = chat;
+				dispatchEvent(event);
+				trace(chat.forwarder.nickName + chat.message + chat.time.getSeconds());
 			}
 			
 			protected function boardsList_changeHandler(event:IndexChangeEvent):void
@@ -106,7 +130,35 @@
 
 				DragManager.doDrag(dragInitiator, dragSource, event, dragProxy);
 			}
-						
+					
+			protected function insertTextClick(event:MouseEvent):void
+			{
+				//cursorManager.setCursor(textCursor);
+				workspace.addEventListener(MouseEvent.CLICK, createTextBox);
+			}
+			
+			protected function createTextBox(event:MouseEvent):void
+			{ 
+				var textBox:RichEditableText = new RichEditableText();
+				
+				textBox.x = event.localX;
+				textBox.y = event.localY;
+				
+				textBox.addEventListener(FlexEvent.CREATION_COMPLETE, function (event:FlexEvent):void
+				{
+					addEventListener(FocusEvent.FOCUS_OUT, function(event:FocusEvent):void
+					{
+						textBox.editable = false;
+					});
+				});
+				
+				workspace.addChild(textBox);
+				workspace.removeEventListener(MouseEvent.CLICK, createTextBox);
+				//cursorManager.removeAllCursors();
+				
+				textBox.setFocus();
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -130,19 +182,31 @@
 	<mx:VRule includeIn="whiteBoard" x="252" bottom="0" top="-1"/>
 	<mx:TabNavigator includeIn="whiteBoard" x="14" width="228" bottom="15" top="15">
 		<s:NavigatorContent label="Toolbox">
-			<mx:DataGrid id="tl" dataProvider="{ac}" dragEnabled="true" width="216" height="415" x="5" y="0">
+			<s:VGroup width="90%" height="90%">
+			<mx:DataGrid id="tl" dataProvider="{ac}" dragEnabled="true" width="95%" height="95%" x="5" y="0">
 				<mx:columns>
 					<mx:DataGridColumn dataField="Pics" itemRenderer="mx.controls.Image"/>
 				</mx:columns>
 			</mx:DataGrid>
+			
+				<s:Button label="Insert Text" click="insertTextClick(event)">
+				</s:Button>
+			</s:VGroup>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Chat" width="100%" height="100%">
+			<s:Button x="181" y="10" label="&gt;" id="btnSend" width="35" fontSize="12" fontWeight="bold" fontFamily="Arial" click="sendMessage()"/>
+			<s:TextArea x="10" y="42" width="206" height="90%" id="txtOutput" editable="false"/>
+			<s:TextInput x="10" y="10" width="160" id="txtInput"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Users" width="100%" height="100%">
+			<mx:DataGrid dataProvider="{ac}" dragEnabled="true" width="95%" height="95%" x="5" y="0">
+				<mx:columns>
+					<mx:DataGridColumn dataField="users"/>
+				</mx:columns>
+			</mx:DataGrid>
 		</s:NavigatorContent>
 	</mx:TabNavigator>
 			
-	<mx:Canvas id="workspace" backgroundColor="#ffffff" dragEnter="acceptIt(event)" dragDrop="performDrop(event)" includeIn="whiteBoard" height="95%" width="75%" dropShadowVisible="true" borderVisible="true" x="262" y="15">
-	</mx:Canvas>
+	<mx:Canvas id="workspace" backgroundColor="#ffffff" dragEnter="acceptIt(event)" dragDrop="performDrop(event)" includeIn="whiteBoard" height="95%" width="75%" dropShadowVisible="true" borderVisible="true" x="262" y="15" />
 	
 </s:Panel>
