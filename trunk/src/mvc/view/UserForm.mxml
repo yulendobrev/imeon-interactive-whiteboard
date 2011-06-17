@@ -23,8 +23,10 @@
 			import mvc.model.User;
 			
 			import mx.collections.ArrayCollection;
+			import mx.collections.Sort;
 			import mx.controls.Alert;
 			import mx.controls.Image;
+			import mx.controls.Label;
 			import mx.core.DragSource;
 			import mx.core.UIComponent;
 			import mx.events.DragEvent;
@@ -38,6 +40,7 @@
 			
 			import userevent.UserEvent;
 			
+	
 			[Bindable]
 			[Inject(source="userController.currentUser", bind="true")]
 			/**
@@ -46,6 +49,10 @@
 			 * inject that property.
 			 */ 
 			public var user:User;
+
+			[Bindable]
+			[Inject(source="chatController.chatArray", bind="true")]
+			public var chatArray:ArrayCollection;
 			
 			[Bindable]
 			[Inject(source="chatController.currentChat", bind="true")]
@@ -69,13 +76,13 @@
 			
 			private function sendMessage():void
 			{
-				chat.forwarder = user;
+				chat.forwarder = user.nickName;
 				chat.message = txtInput.text;
 				chat.time = new Date();		//var sec:uint = chat.time.getSeconds();
 				var event:ChatEvent = new ChatEvent(ChatEvent.SEND_MESSAGE);
 				event.chat = chat;
 				dispatchEvent(event);
-				trace(chat.forwarder.nickName + chat.message + chat.time.getSeconds());
+				trace(chat.forwarder + chat.message + chat.time.getSeconds());
 			}
 			
 			protected function boardsList_changeHandler(event:IndexChangeEvent):void
@@ -183,23 +190,21 @@
 	<mx:TabNavigator includeIn="whiteBoard" x="14" width="228" bottom="15" top="15">
 		<s:NavigatorContent label="Toolbox">
 			<s:VGroup width="90%" height="90%">
-			<mx:DataGrid id="tl" dataProvider="{ac}" dragEnabled="true" width="95%" height="95%" x="5" y="0">
-				<mx:columns>
-					<mx:DataGridColumn dataField="Pics" itemRenderer="mx.controls.Image"/>
-				</mx:columns>
-			</mx:DataGrid>
-			
-				<s:Button label="Insert Text" click="insertTextClick(event)">
-				</s:Button>
+				<mx:DataGrid id="tl" dataProvider="{ac}" dragEnabled="true" width="95%" height="95%" x="5" y="0">
+					<mx:columns>
+						<mx:DataGridColumn dataField="Pics" itemRenderer="mx.controls.Image"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<s:Button label="Insert Text" click="insertTextClick(event)"/>
 			</s:VGroup>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Chat" width="100%" height="100%">
 			<s:Button x="181" y="10" label="&gt;" id="btnSend" width="35" fontSize="12" fontWeight="bold" fontFamily="Arial" click="sendMessage()"/>
-			<s:TextArea x="10" y="42" width="206" height="90%" id="txtOutput" editable="false"/>
+			<s:List  dataProvider="{chatArray}" width="95%" height="90%" x="5" y="38" itemRenderer="mvc.view.chat"/>
 			<s:TextInput x="10" y="10" width="160" id="txtInput"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Users" width="100%" height="100%">
-			<mx:DataGrid dataProvider="{ac}" dragEnabled="true" width="95%" height="95%" x="5" y="0">
+			<mx:DataGrid dataProvider="{chatArray}" dragEnabled="true" width="95%" height="95%" x="5" y="0">
 				<mx:columns>
 					<mx:DataGridColumn dataField="users"/>
 				</mx:columns>
