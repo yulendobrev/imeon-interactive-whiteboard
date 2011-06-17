@@ -4,6 +4,7 @@ package mvc.controller
 	
 	import mvc.model.Chat;
 	
+	import mx.collections.ArrayCollection;
 	import mx.core.FlexGlobals;
 	import mx.rpc.events.ResultEvent;
 	
@@ -13,6 +14,9 @@ package mvc.controller
 	{
 		[Inject]
 		public var chatService:ChatService;
+		
+		[Bindable]
+		public var chatArray:ArrayCollection = new ArrayCollection();
 		
 		[Bindable]
 		public var currentChat:Chat;
@@ -28,12 +32,14 @@ package mvc.controller
 		{
 			
 			chatService.sendMessage(chat);
+//			chatArray.addItem(chat);
 		}
 		
 		[EventHandler(event="ChatEvent.RECEIVED_MESSAGE", properties="chat")]
 		public function receivedMessage(chat:Chat):void
 		{
-			FlexGlobals.topLevelApplication.UserForm.txtOutput.text += chat.message;
+			//FlexGlobals.topLevelApplication.UserForm.txtOutput.text += chat.message;
+			chatArray.addItem(chat);
 		}
 			
 	}

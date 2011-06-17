@@ -23,7 +23,7 @@ package service
 			nc = new NetConnection();
 			nc.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			nc.client = this;
-			nc.connect("rtmp:/whiteboard_chat");
+			nc.connect("rtmp://127.0.0.1:1935/whiteboard_chat");
 		
 			so = SharedObject.getRemote("message", nc.uri, false);
 			so.addEventListener(SyncEvent.SYNC, soOnSync);
@@ -34,17 +34,21 @@ package service
 	
 		public function sendMessage(chat:Chat):void
 		{
-			nc.call("chat.sendMessage", null, chat.message); 
+			nc.call("chat.sendMessage", null, chat.message, chat.forwarder, chat.time.getHours(),
+									chat.time.getMinutes(), chat.time.getSeconds()); 
 			
 		}
 	
-		public function receiveMessage(mesg:String):void
+		public function receiveMessage(mesg:String, forwarder:String, hh:uint, mm:uint, ss:uint):void
 		{
-			var txtOutput:String;
-			txtOutput = mesg+"\n";
 			var eventChat:ChatEvent = new ChatEvent(ChatEvent.RECEIVED_MESSAGE);
 			eventChat.chat = new Chat();
-			eventChat.chat.message = txtOutput;
+			eventChat.chat.message = mesg+"\n";
+			eventChat.chat.forwarder = forwarder;
+			eventChat.chat.time = new Date();
+			eventChat.chat.time.hours = hh;
+			eventChat.chat.time.minutes = mm;
+			eventChat.chat.time.seconds = ss;
 			dispatcher.dispatchEvent(eventChat);
 		}
 	
@@ -56,9 +60,10 @@ package service
 //			{
 //				txtOutput += "prop "+prop+" = "+so.data[prop]+"\n";
 //			}
-//			var eventChat:ChatEvent = new ChatEvent(ChatEvent.SEND_MESSAGE);
+//			var eventChat:ChatEvent = new ChatEvent(ChatEvent.RECEIVED_MESSAGE);
 //			eventChat.chat = new Chat();
-//			eventChat.chat.messageOutput = txtOutput;
+//			eventChat.chat.message = txtOutput;
+//			eventChat.chat.forwarder = forwarder;
 //			dispatcher.dispatchEvent(eventChat);
 		}
 	
