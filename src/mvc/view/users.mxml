@@ -4,6 +4,9 @@
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
 				autoDrawBackground="true">
 	
-	<s:Label text="{data.forwarder}" color="#0000FF"  fontSize="17" fontWeight="bold"/>
-	
+	<s:HGroup>
+		<s:Label text="{data.firstName + ' '}" color="#854300"  fontSize="14" fontWeight="bold"/>
+		<s:Label text="{data.lastName}" color="#854300"  fontSize="14" fontWeight="bold"/>
+		<s:Label text="{' (' + data.nickName + ') \n'}" color="#000000"  fontSize="14" />
+	</s:HGroup>	
 </s:ItemRenderer>

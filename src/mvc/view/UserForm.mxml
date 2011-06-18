@@ -9,6 +9,7 @@
 		<s:State name="login_create"/>
 		<s:State name="whiteBoard"/>
 	</s:states>
+	
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
@@ -49,6 +50,11 @@
 			 * inject that property.
 			 */ 
 			public var user:User;
+			
+			[Bindable]
+			[Inject(source="userController.userArray", bind="true")]
+			public var userArray:ArrayCollection;
+
 
 			[Bindable]
 			[Inject(source="chatController.chatArray", bind="true")]
@@ -78,11 +84,12 @@
 			{
 				chat.forwarder = user.nickName;
 				chat.message = txtInput.text;
+				txtInput.text = "";
 				chat.time = new Date();		//var sec:uint = chat.time.getSeconds();
 				var event:ChatEvent = new ChatEvent(ChatEvent.SEND_MESSAGE);
 				event.chat = chat;
 				dispatchEvent(event);
-				trace(chat.forwarder + chat.message + chat.time.getSeconds());
+				trace(chat.forwarder + chat.message + chat.time.getHours() +':'+ chat.time.getMinutes() +':'+ chat.time.getSeconds());
 			}
 			
 			protected function boardsList_changeHandler(event:IndexChangeEvent):void
@@ -92,13 +99,13 @@
 	
 			[Bindable]
 			private var ac:ArrayCollection = new ArrayCollection([
-				{src:"assets/1.jpg", Pics:'assets/1.jpg'},
-				{src:"assets/2.jpg", Pics:'assets/2.jpg'},
-				{src:"assets/3.jpg", Pics:'assets/3.jpg'},
-				{src:"assets/4.jpg", Pics:'assets/4.jpg'},
-				{src:"assets/5.jpg", Pics:'assets/5.jpg'},
-				{src:"assets/6.jpg", Pics:'assets/6.jpg'},
-				{src:"assets/7.jpg", Pics:'assets/7.jpg'}
+				{src:"assets/1.jpg", Pictures:'assets/1.jpg'},
+				{src:"assets/2.jpg", Pictures:'assets/2.jpg'},
+				{src:"assets/3.jpg", Pictures:'assets/3.jpg'},
+				{src:"assets/4.jpg", Pictures:'assets/4.jpg'},
+				{src:"assets/5.jpg", Pictures:'assets/5.jpg'},
+				{src:"assets/6.jpg", Pictures:'assets/6.jpg'},
+				{src:"assets/7.jpg", Pictures:'assets/7.jpg'}
 			]);
 			
 			private function acceptIt(event:DragEvent):void
@@ -188,7 +195,7 @@
 			</mx:ArrayList>
 		</s:dataProvider>
 	</s:ComboBox>
-	<s:Label x="10" y="26" text="Choose/Create Whiteboard:" height="23" verticalAlign="middle" includeIn="login_create"/>
+	<s:Label x="10" y="26" text="Choose Whiteboard Name:" height="23" verticalAlign="middle" includeIn="login_create"/>
 	<s:TextInput x="134" y="76" id="nickName" includeIn="login_create"/>
 	<s:TextInput x="134" y="106" id="firstName" includeIn="login_create"/>
 	<s:TextInput x="134" y="136" id="lastName" includeIn="login_create"/>
@@ -199,10 +206,10 @@
 	<mx:VRule includeIn="whiteBoard" x="252" bottom="0" top="-1"/>
 	<mx:TabNavigator includeIn="whiteBoard" x="14" width="228" bottom="15" top="15">
 		<s:NavigatorContent label="Toolbox">
-			<s:VGroup width="90%" height="90%">
-				<mx:DataGrid id="tl" dataProvider="{ac}" dragEnabled="true" width="95%" height="95%" x="5" y="0">
+			<s:VGroup width="222" height="95%" x="4" y="0">
+				<mx:DataGrid id="tl" dataProvider="{ac}" dragEnabled="true" width="219" height="95%">
 					<mx:columns>
-						<mx:DataGridColumn dataField="Pics" itemRenderer="mx.controls.Image"/>
+						<mx:DataGridColumn dataField="Pictures" itemRenderer="mx.controls.Image"/>
 					</mx:columns>
 				</mx:DataGrid>
 				<s:Button label="Insert Text" click="insertTextClick(event)"/>
@@ -210,15 +217,11 @@
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Chat" width="100%" height="100%">
 			<s:Button x="181" y="10" label="&gt;" id="btnSend" width="35" fontSize="12" fontWeight="bold" fontFamily="Arial" click="sendMessage()"/>
-			<s:List  dataProvider="{chatArray}" width="95%" height="90%" x="5" y="38" itemRenderer="mvc.view.chat"/>
+			<s:List dataProvider="{chatArray}" width="206" height="90%" x="10" y="38" itemRenderer="mvc.view.chat"/>
 			<s:TextInput x="10" y="10" width="160" id="txtInput"/>
 		</s:NavigatorContent>
 		<s:NavigatorContent label="Users" width="100%" height="100%">
-			<mx:DataGrid dataProvider="{chatArray}" dragEnabled="true" width="95%" height="95%" x="5" y="0">
-				<mx:columns>
-					<mx:DataGridColumn dataField="users"/>
-				</mx:columns>
-			</mx:DataGrid>
+			<s:List dataProvider="{userArray}" width="206" height="95%" x="10" y="10" itemRenderer="mvc.view.users"/>
 		</s:NavigatorContent>
 	</mx:TabNavigator>
 			

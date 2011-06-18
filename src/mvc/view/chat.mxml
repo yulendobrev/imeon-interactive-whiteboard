@@ -6,10 +6,10 @@
 	
 	<s:VGroup>
 		<s:HGroup>
-			<s:Label text="{'['+data.time.getHours().toString()+':'+ data.time.getMinutes().toString() +':'+ data.time.getSeconds().toString()+'] '}" color="#000000"  fontSize="15"/>			
-			<s:Label text="{data.forwarder + ' says: '}" color="#0000FF" fontSize="15" fontWeight="bold"/>
+			<s:Label text="{'['+data.time.getHours().toString()+':'+ data.time.getMinutes().toString() +':'+ data.time.getSeconds().toString()+'] '}" color="#000000"  fontSize="14"/>			
+			<s:Label text="{data.forwarder + ' says: '}" color="#854300" fontSize="14" fontWeight="bold"/>
 		</s:HGroup>
-		<s:Label text="{data.message + '\n'}" fontSize="15"/>
+		<s:Label text="{data.message + '\n'}" fontSize="14"/>
 	</s:VGroup>
 	
 </s:ItemRenderer>

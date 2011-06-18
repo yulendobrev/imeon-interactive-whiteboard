@@ -24,6 +24,9 @@ package mvc.controller
 		public var serviceHelper : ServiceHelper;
 		
 		[Bindable]
+		public var userArray:ArrayCollection = new ArrayCollection();
+		
+		[Bindable]
 		public var currentUser : User;
 		
 		[PostConstruct]
@@ -57,6 +60,12 @@ package mvc.controller
 				+ currentUser.selectedBoard + '.');
 		}
 		
+		[EventHandler(event="UserEvent.SAVED_USER", properties="user")]
+		public function savedUser(user:User):void
+		{
+			//FlexGlobals.topLevelApplication.UserForm.txtOutput.text += chat.message;
+			userArray.addItem(user);
+		}
 		
 	}
 }
