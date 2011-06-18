@@ -8,6 +8,7 @@ package userevent
 	public class UserEvent extends Event
 	{
 		public static const SAVE_USER_REQUESTED : String = "saveUser"; 
+		public static const SAVED_USER : String = "savedUser";
 		public var user:User;
 		
 		/**

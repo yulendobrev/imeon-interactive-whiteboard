@@ -42,13 +42,8 @@ package service
 			nc = new NetConnection();
 			nc.client = this;
 			nc.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
-			nc.connect("rtmpt://127.0.0.1/whiteboard_users");
-
-			so = SharedObject.getRemote("users_list", nc.uri, false);
-			so.client = this;
-			so.connect(nc);
-			so.addEventListener(SyncEvent.SYNC, syncHandler);
-			
+			nc.connect("rtmpt://87.121.97.85/whiteboard_users");
+		
 		}
 		
 		public function close(...args):void
@@ -61,21 +56,33 @@ package service
 			switch(event.info.code)
 			{
 				case "NetConnection.Connect.Success":
-						so = SharedObject.getRemote("users_list", nc.uri, false);
+					trace("NetConnection.Connect.Success")
+						so = SharedObject.getRemote("userList", nc.uri, false);
 						so.client = this;
 						so.connect(nc);
 						so.addEventListener(SyncEvent.SYNC, syncHandler);
 					break;
 				case "NetConnection.Connect.Rejected":
+					trace("NetConnection.Connect.Rejected")
 					break;
 				case "NetConnection.Connect.Failed":
+					trace("NetConnection.Connect.Failed")
 					break;
 			}
 		}
 		
 		protected function syncHandler(event:SyncEvent):void
 		{
-			so.data.listUsers = allUsers;
+//			var txtOutput:String = "";
+//			
+//			for (var prop:String in so.data.listUsers) 
+//			{
+//				txtOutput += prop +"\n";
+//			}
+//			var eventUser:UserEvent = new UserEvent(UserEvent.SAVED_USER); 
+//			eventUser.user = new User();
+//			eventUser.user.nickName = txtOutput;
+//			dispatcher.dispatchEvent(eventUser);
 		}
 		
 		/**
@@ -86,10 +93,9 @@ package service
 		public function saveUser(user:User, resultSaveUser:Function) : void
 		{
 
+			nc.call("user.saveUser", null, user.firstName, user.lastName, user.nickName);
 			
 			resultSaveUser.call(this, new ResultEvent("save"));
-			
-			//dispatcher.dispatchEvent(new UserEvent(UserEvent.SAVE_USER_REQUESTED));
 			
 //			if (so != null)
 //			{					
@@ -97,15 +103,28 @@ package service
 //					{
 //					allUsers = so.data.listUsers;
 //					allUsers.addItem(user);
-//					so.data.listUsers = allUsers;
+//
+//					so.setProperty("listUsers", allUsers);
 //				}
 //				else 
 //				{
 //					allUsers.addItem(user);
-//					//so.data.listUsers = allUsers;
+//
+//					so.setProperty("listUsers", allUsers);
 //				}
 //			}
 			
 		}
+		
+		public function savedUser(first:String, last:String, forwarder:String):void
+		{
+			var eventUser:UserEvent = new UserEvent(UserEvent.SAVED_USER); 
+			eventUser.user = new User();
+			eventUser.user.firstName = first;
+			eventUser.user.lastName = last;
+			eventUser.user.nickName = forwarder;
+			dispatcher.dispatchEvent(eventUser);
+		}
+
 	}
 }

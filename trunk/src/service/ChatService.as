@@ -23,12 +23,12 @@ package service
 			nc = new NetConnection();
 			nc.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			nc.client = this;
-			nc.connect("rtmpt://127.0.0.1:1935/whiteboard_chat");
+			nc.connect("rtmpt://87.121.97.85:1935/whiteboard_chat"); //87.121.97.85
 		
-			so = SharedObject.getRemote("message", nc.uri, false);
-			so.addEventListener(SyncEvent.SYNC, soOnSync);
-			so.client = this;
-			so.connect(nc);
+//			so = SharedObject.getRemote("message", nc.uri, false);
+//			so.addEventListener(SyncEvent.SYNC, soOnSync);
+//			so.client = this;
+//			so.connect(nc);
 		
 		}
 	
@@ -67,11 +67,33 @@ package service
 //			dispatcher.dispatchEvent(eventChat);
 		}
 	
-	
+//		public function close(...args):void
+//		{
+//			//trace("close: "+args);
+//		}	
+		
 		private function netStatusHandler(event:NetStatusEvent):void 
 		{
-
+			switch(event.info.code)
+			{
+				case "NetConnection.Connect.Success":
+					trace("NetConnection.Connect.Success")
+					so = SharedObject.getRemote("message", nc.uri, false);
+					so.addEventListener(SyncEvent.SYNC, soOnSync);
+					so.client = this;
+					so.connect(nc);
+					break;
+				case "NetConnection.Connect.Rejected":
+					trace("NetConnection.Connect.Rejected")
+					break;
+				case "NetConnection.Connect.Failed":
+					trace("NetConnection.Connect.Failed")
+					break;
+			}
 		}
+		
+
+
 		
 	}
 	
