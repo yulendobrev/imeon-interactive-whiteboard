@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 title="Image Properties" skinClass="mvc.view.ImagePropertiesSkin">
+
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Image;
+			import mx.core.IVisualElementContainer;
+			
+			private var _imageChanged:Boolean = false;
+			private var _image:Image;
+			public function get image():Image
+			{
+				return _image;
+			}
+			
+			public function set image(value:Image):void
+			{
+				_image = value;
+				
+				_imageChanged = true;
+				invalidateProperties();
+			}
+			
+			protected function setInitialValues():void
+			{
+				if(_image != null)
+				{
+					userX.text = _image.x.toString();
+					userY.text = _image.y.toString();
+					userZoom.text = _image.scaleX.toString();
+					userRotation.text = _image.rotation.toString();
+				}
+			}
+			
+			protected function setImageProperties():void
+			{
+				if(_image != null)
+				{
+					var uX:Number = Number(userX.text);
+					var uY:Number = Number(userY.text);
+					var uZoom:Number = Number(userZoom.text)
+					var uRotation:Number = Number(userRotation.text)
+					
+					if(!isNaN(uX))
+						_image.x = uX;
+					
+					if(!isNaN(uY))
+						_image.y = uY;
+					
+					if(!isNaN(uZoom) && (uZoom > 0.1 || uZoom < -0.1))
+						_image.scaleX = _image.scaleY = uZoom;
+					
+					if(!isNaN(uRotation))
+						_image.rotation = uRotation;
+				}
+			}
+			
+			protected override function commitProperties():void
+			{
+				super.commitProperties();
+				
+				if(_imageChanged)
+				{
+					_imageChanged = false;
+					setInitialValues();
+				}
+			}
+			
+			protected function close():void
+			{
+				if(parent != null)
+				{
+					if(parent is IVisualElementContainer)
+						IVisualElementContainer(parent).removeElement(this);
+					else
+						parent.removeChild(this);
+				}
+			}
+
+			protected function commitChanges(event:MouseEvent):void
+			{
+				setImageProperties();
+				close();
+			}
+			
+			protected function apply(event:MouseEvent):void
+			{
+				setImageProperties();
+			}
+			
+			protected function cancel(event:MouseEvent):void
+			{
+				close();
+			}
+
+			protected function formItemKeyDown(event:KeyboardEvent):void
+			{
+				if(event.keyCode == Keyboard.ENTER)
+				{
+					setImageProperties();
+				}
+			}
+
+		]]>
+	</fx:Script>
+	
+	<s:VGroup>
+		<mx:Form>
+			<mx:FormItem label="X:" keyDown="formItemKeyDown(event)">
+				<s:TextInput id="userX"/>
+			</mx:FormItem>
+			<mx:FormItem label="Y:" keyDown="formItemKeyDown(event)">
+				<s:TextInput id="userY"/>
+			</mx:FormItem>
+			<mx:FormItem label="Zoom:" keyDown="formItemKeyDown(event)">
+				<s:TextInput id="userZoom"/>
+			</mx:FormItem>
+			<mx:FormItem label="Rotation:" keyDown="formItemKeyDown(event)">
+				<s:TextInput id="userRotation"/>
+			</mx:FormItem>
+		</mx:Form>
+		
+		<s:Group width="100%">
+			<s:HGroup horizontalCenter="0" left="10" right="10" bottom="10" gap="10">
+				<s:Button label="OK" click="commitChanges(event)"/>
+				<s:Button label="Apply" click="apply(event)"/>
+				<s:Button label="Cancel" click="cancel(event)"/>
+			</s:HGroup>
+		</s:Group>
+	</s:VGroup>
+</s:Panel>

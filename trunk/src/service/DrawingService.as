@@ -8,8 +8,10 @@ package service
 	import flash.net.registerClassAlias;
 	
 	import mvc.model.EllipseData;
+	import mvc.model.ImageData;
 	import mvc.model.LineData;
 	import mvc.model.RectangleData;
+	import mvc.view.renderers.ImageRenderer;
 	
 	import spark.primitives.Ellipse;
 	import spark.primitives.Line;
@@ -104,6 +106,15 @@ package service
 			dispatcher.dispatchEvent(new EllipseEvent(type, ellipse));
 		}
 		
+		public function imageAdded(ID:String, data:ImageData):void
+		{
+			if(id == ID)
+				return;
+			
+			var type:String = ImageEvent.REMOTE_ADDED;
+			dispatcher.dispatchEvent(new ImageEvent(type, data));
+		}
+		
 		public function notifyRectangleDrawn(data:RectangleData):void
 		{
 			if(so)
@@ -120,6 +131,12 @@ package service
 		{
 			if(so)
 				so.send("ellipseDrawn", id, data);
+		}
+		
+		public function notifyImageAdded(data:ImageData):void
+		{
+			if(so)
+				so.send("imageAdded", id, data);
 		}
 	}
 }
