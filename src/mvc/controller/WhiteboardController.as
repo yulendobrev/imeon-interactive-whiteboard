@@ -11,6 +11,7 @@ package mvc.controller
 	import service.DrawingService;
 	
 	import whiteboardevent.EllipseEvent;
+	import whiteboardevent.ImageEvent;
 	import whiteboardevent.LineEvent;
 	import whiteboardevent.RectangleEvent;
 
@@ -56,6 +57,12 @@ package mvc.controller
 		public function drawRemoteEllipse(event:EllipseEvent):void
 		{
 			dispatchEvent(new EllipseEvent(event.type, EllipseData.ellipse(event.data)));
+		}
+		
+		[EventHandler( event = "ImageEvent.REMOTE_ADDED" )]
+		public function drawRemoteImage(event:ImageEvent):void
+		{
+			dispatchEvent(new ImageEvent(event.type, event.data));
 		}
 	}
 }

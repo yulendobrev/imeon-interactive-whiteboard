@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.IList;
+			
+			private var _dataProviderChanged:Boolean = false;
+			
+			private var _dataProvider:IList;
+			public function get dataProvider():IList
+			{
+				return _dataProvider;
+			}
+			
+			public function set dataProvider(value:IList):void
+			{
+				if(_dataProvider != value)
+				{
+					_dataProvider = value;
+					
+					_dataProviderChanged = true;
+					invalidateProperties();
+				}
+			}
+			
+			private var _elementFactoryChanged:Boolean = false;
+			
+			private var _elementFactory:IBoardElementFactory;
+			public function get elementFactory():IBoardElementFactory
+			{
+				return _elementFactory;
+			}
+			
+			public function set elementFactory(value:IBoardElementFactory)
+			{
+				if(_elementFactory != value)
+				{
+					_elementFactory = value;
+					
+					_elementFactoryChanged = true;
+					invalidateProperties();
+				}
+			}
+			
+			protected override function commitProperties():void
+			{
+				if(_dataProviderChanged)
+				{
+					super.removeAllChildren();
+					super.removeAllElements();
+					
+					if(_dataProvider == null)
+						return;
+					
+					//for
+				}
+			}
+		]]>
+	</fx:Script>
+</mx:Canvas>

@@ -23,7 +23,7 @@ package service
 			nc = new NetConnection();
 			nc.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 			nc.client = this;
-			nc.connect("rtmp://127.0.0.1:1935/whiteboard_chat");
+			nc.connect("rtmpt://127.0.0.1:1935/whiteboard_chat");
 		
 			so = SharedObject.getRemote("message", nc.uri, false);
 			so.addEventListener(SyncEvent.SYNC, soOnSync);

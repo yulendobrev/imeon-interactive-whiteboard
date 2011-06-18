@@ -3,7 +3,7 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" fontWeight="normal" fontStyle="normal" dropShadowVisible="true" borderVisible="true" title="Create and Login" enabled="true" 
 		 title.whiteBoard="{boardsList.selectedItem}" currentState="login_create" title.login_create="Create and Login" height.login_create="250" height.whiteBoard="90%" width.login_create="350" width.whiteBoard="90%"
-		 enabled.login_create="true">
+		 enabled.login_create="true" xmlns:view="mvc.view.*">
 	
 	<s:states>
 		<s:State name="login_create"/>
@@ -115,6 +115,8 @@
 					img.y=event.localY
 					img.source=items[0].src
 					img.addEventListener(MouseEvent.MOUSE_MOVE, dragIt);
+					img.addEventListener(MouseEvent.DOUBLE_CLICK, showSettingPanel);
+					img.doubleClickEnabled = true;
 					workspace.addChild(img);
 				}
 				else
@@ -164,6 +166,14 @@
 				//cursorManager.removeAllCursors();
 				
 				textBox.setFocus();
+			}
+			
+			protected function showSettingPanel(event:MouseEvent):void
+			{
+				var settings:ImageProperties = new ImageProperties();
+				settings.image = Image(event.currentTarget);
+				
+				workspace.addChild(settings);
 			}
 			
 		]]>
